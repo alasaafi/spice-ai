@@ -1,0 +1,41 @@
+/* Personnalisation de la barre de défilement pour un look plus propre */
+#chatbox::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chatbox::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#chatbox::-webkit-scrollbar-thumb {
+    background: #d1d5db; /* gray-300 */
+    border-radius: 4px;
+}
+
+#chatbox::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af; /* gray-400 */
+}
+
+/* Style pour l'indicateur d'attente "..." */
+.typing-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9ca3af; /* gray-400 */
+    margin: 0 2px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* Permet au textarea de grandir avec le contenu */
+#message {
+    max-height: 120px; /* Limite la hauteur maximale */
+}

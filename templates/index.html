@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 🌶️ Spice AI - Chatbot Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        #chatbox::-webkit-scrollbar { width: 8px; }
+        #chatbox::-webkit-scrollbar-track { background: #1f2937; }
+        #chatbox::-webkit-scrollbar-thumb { background: #4b5563; }
+        #chatbox::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        .typing-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #9ca3af; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        #message { max-height: 150px; }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-800 text-black dark:text-white flex h-screen">
+
+    <div class="w-64 bg-gray-100 dark:bg-gray-900 flex flex-col p-4 border-r border-gray-200 dark:border-gray-700">
+        <div class="mb-4 pb-4 border-b border-gray-300 dark:border-gray-600">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-3 flex items-center">
+                <span class="text-2xl mr-2">🌶️</span> Spice AI
+            </h2>
+            <ul id="nav-links" class="space-y-1">
+                <li id="login-link-li">
+                    <a href="#" id="login-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                        <span>Login</span>
+                    </a>
+                </li>
+                <li id="signup-link-li">
+                    <a href="#" id="signup-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                        <span>Signup</span>
+                    </a>
+                </li>
+                <li id="profile-link-li" class="hidden">
+                    <a href="#" id="profile-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li id="logout-link-li" class="hidden">
+                     <a href="#" id="logout-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="#" id="subscription-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 12v.01M12 12v.01M12 16v.01M12 16v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Subscription</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="about-link" class="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>About</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <button id="new-chat-btn" class="w-full bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-black dark:text-white font-semibold py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors duration-200 mb-4">
+            + New Discussion
+        </button>
+        
+        <h2 class="text-lg font-bold mb-2 text-gray-700 dark:text-gray-300">History</h2>
+        <div id="conversation-list" class="flex-1 overflow-y-auto space-y-2 p-1">
+            </div>
+    </div>
+
+    <div class="flex-1 flex flex-col">
+        <header class="p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+            <h1 id="chat-header-title" class="text-xl font-bold text-gray-800 dark:text-white">Spice AI</h1>
+        </header>
+        <div id="chat-container" class="flex-1 flex flex-col h-full overflow-hidden">
+            <div id="chatbox" class="flex-1 p-6 overflow-y-auto space-y-4"></div>
+            <div id="typing-indicator" class="px-6 pb-2 hidden">
+                <div class="flex justify-start">
+                    <div class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg">
+                        <div class="typing-dots"><span></span><span></span><span></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <textarea id="message" rows="1" class="flex-1 p-3 bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-white" placeholder="Ask Spice AI..."></textarea>
+                    <button id="send" class="bg-black dark:bg-white text-white dark:text-black p-3 rounded-full hover:opacity-80 focus:outline-none transition-colors duration-200">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Login to Spice AI</h2>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 dark:hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <a href="/google-login" class="w-full flex items-center justify-center py-2.5 px-4 mb-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19"><path fill-rule="evenodd" d="M8.842 18.083a8.842 8.842 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.842-8.842 8.842 8.842 0 0 1 8.842 8.842c0 .013 0 .025-.002.037A8.842 8.842 0 0 1 8.842 18.083Zm-1.426-8.225h2.852v1.426h-2.852v-1.426Zm2.14-5.654h-1.426v1.426h1.426V4.204Zm1.426 2.852h-1.426v1.426h1.426v-1.426Zm-2.852 2.852h2.852v1.426h-2.852v-1.426Z" clip-rule="evenodd"/></svg>
+                Sign in with Google
+            </a>
+            <div class="flex items-center my-6"><hr class="flex-grow border-gray-300 dark:border-gray-600"><span class="mx-4 text-gray-500 dark:text-gray-400">or</span><hr class="flex-grow border-gray-300 dark:border-gray-600"></div>
+            <form>
+                <div class="mb-4"><label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label><input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required></div>
+                <div class="mb-6"><label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label><input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="••••••••" required></div>
+                <button type="submit" class="w-full text-white bg-black dark:bg-white dark:text-black hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Login to your account</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="signup-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Create an Account</h2>
+                <button id="close-signup-modal-btn" class="text-gray-500 hover:text-gray-800 dark:hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <a href="/google-login" class="w-full flex items-center justify-center py-2.5 px-4 mb-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19"><path fill-rule="evenodd" d="M8.842 18.083a8.842 8.842 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.842-8.842 8.842 8.842 0 0 1 8.842 8.842c0 .013 0 .025-.002.037A8.842 8.842 0 0 1 8.842 18.083Zm-1.426-8.225h2.852v1.426h-2.852v-1.426Zm2.14-5.654h-1.426v1.426h1.426V4.204Zm1.426 2.852h-1.426v1.426h1.426v-1.426Zm-2.852 2.852h2.852v1.426h-2.852v-1.426Z" clip-rule="evenodd"/></svg>
+                Sign up with Google
+            </a>
+            <div class="flex items-center my-6"><hr class="flex-grow border-gray-300 dark:border-gray-600"><span class="mx-4 text-gray-500 dark:text-gray-400">or</span><hr class="flex-grow border-gray-300 dark:border-gray-600"></div>
+            <form>
+                <div class="mb-4"><label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your username</label><input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="your_username" required></div>
+                <div class="mb-4"><label for="signup-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label><input type="email" name="email" id="signup-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required></div>
+                <div class="mb-6"><label for="signup-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label><input type="password" name="password" id="signup-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="••••••••" required></div>
+                <button type="submit" class="w-full text-white bg-black dark:bg-white dark:text-black hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create account</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="subscription-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Choose Your Plan</h2>
+                <button id="close-subscription-modal-btn" class="text-gray-500 hover:text-gray-800 dark:hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold mb-2">Starter</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">For individuals and small projects.</p>
+                    <p class="text-4xl font-bold mb-4">$10<span class="text-lg font-normal text-gray-500 dark:text-gray-400">/month</span></p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300 mb-6 flex-grow"><li>✔️ Basic AI model access</li><li>✔️ 100 messages per day</li><li>✔️ Standard support</li></ul>
+                    <button class="w-full mt-auto bg-gray-200 dark:bg-gray-600 text-black dark:text-white py-2 rounded-lg hover:opacity-80">Choose Plan</button>
+                </div>
+                <div class="border-2 border-indigo-500 rounded-lg p-6 flex flex-col relative">
+                    <span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
+                    <h3 class="text-xl font-semibold mb-2">Medium</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">For professionals and power users.</p>
+                    <p class="text-4xl font-bold mb-4">$25<span class="text-lg font-normal text-gray-500 dark:text-gray-400">/month</span></p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300 mb-6 flex-grow"><li>✔️ Advanced AI model access</li><li>✔️ Unlimited messages</li><li>✔️ Priority support</li><li>✔️ Early access to new features</li></ul>
+                    <button class="w-full mt-auto bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600">Choose Plan</button>
+                </div>
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold mb-2">Pro</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">For teams and businesses.</p>
+                    <p class="text-4xl font-bold mb-4">$50<span class="text-lg font-normal text-gray-500 dark:text-gray-400">/month</span></p>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-300 mb-6 flex-grow"><li>✔️ All Medium features</li><li>✔️ Team collaboration tools</li><li>✔️ API access</li></ul>
+                    <button class="w-full mt-auto bg-gray-200 dark:bg-gray-600 text-black dark:text-white py-2 rounded-lg hover:opacity-80">Choose Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="about-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-2xl mx-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">About Spice AI 🌶️</h2>
+                <button id="close-about-modal-btn" class="text-gray-500 hover:text-gray-800 dark:hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div class="text-gray-600 dark:text-gray-300 space-y-6">
+                <p class="text-lg"><strong>Spice AI</strong> is your advanced coding partner, designed to accelerate your development workflow and enhance your programming skills.</p>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-3">Key Features</h3>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Persistent Conversations:</strong> Never lose your train of thought. All your chats are automatically saved.</li>
+                        <li><strong>Syntax Highlighting:</strong> Code snippets are rendered in a clean, VS Code-like format.</li>
+                        <li><strong>Dark Mode:</strong> A beautiful, eye-friendly dark theme is enabled by default.</li>
+                        <li><strong>User Authentication:</strong> Securely sign up and log in to keep your conversations private.</li>
+                        <li><strong>Subscription Tiers:</strong> Choose a plan that fits your needs, from casual use to professional-grade power.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-3">Powered By</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Python</span>
+                        <span class="bg-gray-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Flask</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">JavaScript</span>
+                        <span class="bg-sky-100 text-sky-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-sky-900 dark:text-sky-300">Tailwind CSS</span>
+                        <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">SQLite</span>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 flex flex-wrap gap-4 justify-center">
+                    <a href="#" class="bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-black dark:text-white font-semibold py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors duration-200">Read Documentation</a>
+                    <a href="#" class="bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-black dark:text-white font-semibold py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors duration-200">View on GitHub</a>
+                    <a href="#" class="bg-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-black dark:text-white font-semibold py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors duration-200">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">My Profile</h2>
+                <button id="close-profile-modal-btn" class="text-gray-500 hover:text-gray-800 dark:hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <form>
+                <div class="mb-4">
+                    <label for="profile-username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                    <input type="text" name="profile-username" id="profile-username" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400" value="your_username" disabled>
+                </div>
+                <div class="mb-4">
+                    <label for="profile-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
+                    <input type="email" name="profile-email" id="profile-email" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400" value="name@company.com" disabled>
+                </div>
+                 <div class="mb-6">
+                    <label for="profile-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                    <input type="password" name="profile-password" id="profile-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter new password">
+                </div>
+                <button type="submit" class="w-full text-white bg-black dark:bg-white dark:text-black hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
