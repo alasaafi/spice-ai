@@ -1,5 +1,6 @@
 import os
 import requests
+import sqlite3
 from flask import Flask, render_template, request, jsonify, g, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,7 +9,6 @@ from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 
 # --- Configuration for Render with PostgreSQL ---
-# This line is corrected to properly handle the connection string from Neon/Render
 db_url = os.environ.get('DATABASE_URL')
 if db_url and db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
@@ -49,9 +49,8 @@ class Conversation(db.Model):
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
-    role = db.Column(db.String(10), nullable=False) # 'user' or 'assistant'
+    role = db.Column(db.String(10), nullable=False)
     content = db.Column(db.Text, nullable=False)
-
 
 # --- Authentication Routes ---
 @app.route("/signup", methods=["POST"])
@@ -94,7 +93,6 @@ def check_session():
         return jsonify({"logged_in": True, "username": session['username']})
     return jsonify({"logged_in": False})
 
-
 # --- Google Login Routes ---
 @app.route('/google-login')
 def google_login():
@@ -106,7 +104,9 @@ def google_callback():
     try:
         token = google.authorize_access_token()
         user_info = oauth.google.userinfo()
-        email, username = user_info['email'], user_info.get('name', email.split('@')[0])
+        
+        email = user_info['email']
+        username = user_info.get('name', email.split('@')[0])
         
         user = User.query.filter_by(email=email).first()
         if not user:
@@ -118,8 +118,8 @@ def google_callback():
         session['user_id'], session['username'] = user.id, user.username
         return redirect(url_for('index'))
     except Exception as e:
-        return f"An error occurred: {e}", 500
-
+        print(f"An error occurred in google_callback: {e}")
+        return "An error occurred during Google login. Please check the server logs.", 500
 
 # --- Application Routes ---
 @app.route("/")
@@ -157,8 +157,11 @@ def chat():
     user_msg = Message(conversation_id=conv_id, role='user', content=user_message)
     db.session.add(user_msg)
     
-    history = Message.query.filter_by(conversation_id=conv_id).all()
-    history_formatted = [{"role": m.role, "content": m.content} for m in history]
+    # We commit here to make sure the user's message is in the history for the AI
+    db.session.commit()
+
+    history_messages = Message.query.filter_by(conversation_id=conv_id).order_by(Message.id).all()
+    history_formatted = [{"role": m.role, "content": m.content} for m in history_messages]
     
     bot_reply = get_bot_response(history_formatted)
     bot_msg = Message(conversation_id=conv_id, role='assistant', content=bot_reply)
@@ -179,4 +182,4 @@ def get_bot_response(history):
         return data["choices"][0]["message"]["content"]
     except Exception as e:
         print(f"API Error: {e}")
-        return "Sorry, I couldn't connect to the AI service."
+        return "Sorry, I couldn't connect to the AI service at the moment."
